@@ -31,7 +31,7 @@ Genoeg tekst. Je mag eindelijk aan de slag!
 In hal 3, waar al onze profielen staan opgeslagen, worden er dagelijks profielen gepickt die de productie van een hele 
 dag moet kunnen bevoorraden. Een deur bestaat uit verschillende profielen. Een profiel wordt aangeduid met de letter 
 `G` als prefix (dus wij hebben profielen G01 tot en met G72). Er zijn dus 72 verschillende profielen die gebruikt 
-worden om onze deuren te maken. Elk profiel is ook in al onze 12 kleuren beschikbaar.
+worden om onze deuren te maken. Elk profiel is ook in al onze 12 kleuren beschikbaar. 
 
 De orderpicker kijkt in de huidige situatie naar alle deuren die die dag gemaakt moeten worden en op basis daarvan 
 maakt diegene een inschatting wat er aan profielen nodig is die dag. Dit is een proces wat inefficiënt is en enorm 
@@ -40,15 +40,16 @@ veel tijd kost om uit te rekenen wat er op een dag nodig is.
 ### Wat is de oplossing?
 
 Wat de orderpicker enorm kan helpen is een lijst met hoeveel profielen in welke kleur diegene die dag moet 
-picken om aan de vraag te kunnen voldoen van de productie. 
-
-Om uit te kunnen rekenen hoeveel profielen er nodig zijn maken wij gebruik van een externe API 
+picken om aan de vraag te kunnen voldoen van de productie. De profielen die gepickt worden zijn bijna allemaal 3000mm 
+lang. Om uit te kunnen rekenen hoeveel profielen er nodig zijn maken wij gebruik van een externe API 
 [optiCutter](https://www.opticutter.com/public/doc/api#introduction). Die berekend aan de hand van elk profiel hoeveel 
-er nodig zijn op basis van de afmetingen en de hoeveelheid profielen er van die maat gezaagd moeten gaan worden. 
+er nodig zijn op basis van de afmetingen en de hoeveelheid profielen er van die maat gezaagd moeten gaan worden.  
 Deze API neemt ook gelijk de efficiëntste manier van zagen mee. Dit betekent dat wij ook gelijk de "waste" kunnen 
 verminderen met deze oplossing! 
 
-De input die wij nodig hebben om deze API te vullen is het onderstaande object. 
+Let op dat je deze API niet daadwerkelijk hoeft te gebruiken. Wat wij zoeken is puur de input voor deze API. De input 
+die wij nodig hebben om deze API te vullen is het onderstaande object. Dit is representatie hoe het object opgemaakt 
+moet worden. De kleuren en de profielen in dit object zijn dus puur bedoeld als voorbeeld.
 
 ```json
 {
@@ -101,7 +102,8 @@ De input die wij nodig hebben om deze API te vullen is het onderstaande object.
 
 #### Opbouw van dit object
 
-De mapping van de data heb ik hieronder beschreven. In het `ProductieStaat.json` staan ongeveer 75 productiestaten.  
+De mapping van de data heb ik hieronder beschreven. In het `ProductieStaat.json` staan ongeveer 75 productiestaten. In  
+elke productiestaat kan je alle data vinden in het `saw` object.
 
 ```json
 {
@@ -110,7 +112,8 @@ De mapping van de data heb ik hieronder beschreven. In het `ProductieStaat.json`
             "length": "<saw.*.value>",
             "count": "<saw.*.amount>"
         }
-    }...
+    },
+    {...},
 }
 ```
 
@@ -122,21 +125,23 @@ De profielkleur kan je vinden in `profielkleur.title`. Deze titel kan je gebruik
 
 ## Scope van deze casus
 
-De scope van deze casus is alleen het muteren van het `ProductieStaat.json` bestand naar het dit object.
-Heb je een soortgelijk object kunnen maken dan voldoe je aan de scope van deze casus. 
-
-In elke productiestaat kan je alle data vinden in het `saw` object.
+De scope van deze casus is alleen het muteren van het `ProductieStaat.json` bestand naar het dit object die nodig is 
+voor de input van de optiCutter API. Heb je een soortgelijk object kunnen maken dan voldoe je aan de scope van deze 
+casus.
 
 ## Requirements
 
 Om de dataset juist te muteren moet je aan een paar requirements voldoen om tot het juiste antwoord te komen:
-- Je hoeft alleen de profielen mee te nemen waar een G nummer in voorkomt, dus bijvoorbeeld:
-  - `OnderbovenProfielg41` is een profiel
-  - `exactinputtaatsdeur_z` is geen profiel. Hier zit namelijk geen G nummer in verwerkt
+- Je hoeft alleen de profielen mee te nemen waar een G nummer in voorkomt (de profielen kan je in het `saw` object 
+vinden), dus bijvoorbeeld:
+  - `OnderbovenProfielg41` is een profiel.
+  - `exactinputtaatsdeur_z` is geen profiel. Hier zit namelijk geen G nummer in verwerkt.
+- De profielnamen, zoals `OnderbovenProfielg41`, moeten veranderd worden naar een G nummer. In dit geval zal het dus 
+`G41` moeten zijn. Hiermee kan je namelijk later alle profielen met de juiste kleur bij elkaar mappen.
 - Er zijn ook twee profielen die in elkaar passen. En dus dezelfde kleur en maat hebben. Voor dit soort 
-profielcombinaties heb je bijvoorbeeld `staanderg54g56taatsdeur`. Zoals je ziet zitten hier twee G nummer in. Dus als 
-je in dit object een `value` heb van `2396` en een `amount` van `2`. Dan krijg je het volgende resultaat (profielkleur 
-is `PROFIELKLEUR: RAL 7032 Kiezel grijs`):
+profielcombinaties heb je bijvoorbeeld `staanderg54g56taatsdeur`. Hier zitten hier twee G nummer in. Dus als 
+je in dit object een `value` heb van `2396` en een `amount` van `2`. Dan krijg je het volgende resultaat bij een 
+profielkleur van `PROFIELKLEUR: RAL 7032 Kiezel grijs`:
 ```json
 {
     "PROFIELKLEUR: RAL 7032 Kiezel grijs": {
@@ -147,12 +152,15 @@ is `PROFIELKLEUR: RAL 7032 Kiezel grijs`):
         "G56": {
             "length": 2396,
             "count": 2
-        }
+        },
+        {...},
     }
 }
 ```
-- Dezelfde G nummers en kleuren moeten bij elkaar gemapped worden. Ik zal hier een voorbeeld geven van de huidige 
-situatie en de gewenste situatie:
+- De G nummers en kleuren combinatie moeten bij elkaar gemapped worden. Ik zal hier een voorbeeld geven van de huidige 
+situatie en de gewenste situatie die nodig is voor de input van de optiCutter API. Let op dat dit een subset is van de 
+productiestaten. 
+
 #### Huidige situatie
 ```json
 {
@@ -213,7 +221,8 @@ situatie en de gewenste situatie:
             "title": "PROFIELKLEUR: Leem"
         }
     }
-}
+},
+{...},
 ```
 
 #### Gewenste situatie

@@ -9,11 +9,12 @@ het forken van een project.
 2. Doe `composer install` om alle benodigde packages van laravel te installeren. Heb je nog geen composer op 
 jouw machine staan dan kan je [hier](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos) lezen 
 hoe je het kan installeren.
-3. Maak een kopie van het `.env.example` bestand en noem het `.env`. 
-4. Doe `php artisan serve` en de applicatie is dan te benaderen op localhost. Als je 
-[laravel valet](https://laravel.com/docs/9.x/valet) heb kan je hem ook daarmee draaien. 
-5. Als je naar `{{baseUrl}}/api/data` gaat zie je de huidige dataset. Het is een json output en het is 
+3. Doe `php artisan serve` en de applicatie is dan te benaderen op localhost. Als je 
+[laravel valet](https://laravel.com/docs/9.x/valet) gebruikt kan je hem ook daarmee draaien. 
+4. Als je naar `{{baseUrl}}/api/data` gaat zie je de huidige dataset. Het is een json output en het is 
 bijvoorbeeld handig om hiervoor [Postman](https://www.postman.com/downloads/) te gebruiken.
+
+Als je de url kan benaderen kan je beginnen!
 
 ## Waar kan ik beginnen?
 
@@ -108,10 +109,13 @@ elke productiestaat kan je alle data vinden in het `saw` object.
 ```json
 {
     "<saw.profielkleur.title>": {
-        "<saw.*.title>": {
-            "length": "<saw.*.value>",
-            "count": "<saw.*.amount>"
-        }
+        "<saw.*.title>": [
+            {
+                "length": "<saw.*.value>",
+                "count": "<saw.*.amount>"
+            },
+            {...},
+        ]
     },
     {...},
 }
@@ -222,6 +226,19 @@ productiestaten.
         }
     }
 },
+{
+    "id": 012,
+    "saw": {
+        "liggerg40": {
+            "title": "Ligger G40",
+            "amount": 2,
+            "value": 1600
+        },
+        "profielkleur": {
+          "title": "PROFIELKLEUR: Leem"
+        }
+    }
+},
 {...},
 ```
 
@@ -272,6 +289,10 @@ productiestaten.
             {
                 "length": 1600,
                 "count": 1
+            },
+            {
+                "amount": 2,
+                "value": 1600
             }
         ]
     }

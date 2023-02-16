@@ -291,8 +291,8 @@ productiestaten.
                 "count": 1
             },
             {
-                "amount": 2,
-                "value": 1600
+                "length": 2,
+                "count": 1600
             }
         ]
     }

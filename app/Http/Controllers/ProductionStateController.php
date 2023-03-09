@@ -34,7 +34,7 @@ class ProductionStateController extends Controller
             // Geef de profielen een andere naam
             foreach($filteredSubArrays as $key => $subArray) {
                 preg_match('/g(\d+)/i', $key, $matches);
-                $renamedSubArrays['G'. $matches[1]] = ['length' => $subArray['value'] . ' mm', 'count' => $subArray['amount']];
+                $renamedSubArrays['G'. $matches[1]] = ['length' => $subArray['value'] , 'count' => $subArray['amount']];
             }
 
             foreach($uniqueTitles as $title) {
@@ -46,11 +46,9 @@ class ProductionStateController extends Controller
             }
         }
 
-        dd($uniqueTitlesAssoc);
+        // dd($uniqueTitlesAssoc);
 
-        return view('decoded', [
-            'decoded' => $uniqueTitlesAssoc
-        ]);
+        return response()->json($uniqueTitlesAssoc);
 
     }
 }

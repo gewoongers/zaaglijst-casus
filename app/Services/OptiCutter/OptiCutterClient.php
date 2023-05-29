@@ -13,9 +13,11 @@ class OptiCutterClient
     {
     }
 
-    public function getStatus()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getStatus(): array
     {
-        $response = Http::withToken($this->bearerToken)->get($this->baseUrl . 'status');
-        return $response->json();
+        return Http::withToken($this->bearerToken)->get($this->baseUrl . 'status')->json();
     }
 }

@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'opticutter' => [
+        'url' => env('OPTI_CUTTER_API_URL'),
+        'bearer_token' => env('OPTI_CUTTER_AUTH_TOKEN'),
+    ],
 ];

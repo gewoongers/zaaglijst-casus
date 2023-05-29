@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 class ProductionStateController extends Controller
 {
-    public function index(): string
+    public function __invoke(
+
+    )
     {
-        return file_get_contents(storage_path() . "/data/ProductieStaat.json");
+        $productionState = file_get_contents(storage_path() . "/data/ProductieStaat.json");
+
+
     }
 }

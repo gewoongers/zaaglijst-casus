@@ -20,4 +20,18 @@ class OptiCutterClient
     {
         return Http::withToken($this->bearerToken)->get($this->baseUrl . 'status')->json();
     }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function linearCuttingPlan(array $data): array
+    {
+        $response = Http::withToken($this->bearerToken)
+            ->post($this->baseUrl . 'linear', $data);
+
+        throw_if($response->json('errors'), new \Exception($response->json('errors.0.detail')));
+
+        return $response->json();
+    }
 }
